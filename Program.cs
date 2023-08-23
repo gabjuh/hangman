@@ -10,15 +10,70 @@ namespace Hangman {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
             bool gameFinished = false;
-            string text = "This is a hidden text";
             char letter = ' ';
             string hiddenText = string.Empty;
             string welcomeText = "Welcome to my HANGMAN Game";
             string gitLink = "https://github.com/gabjuh/hangman";
-            int headerWidth = welcomeText.Length + 50;
+            string infoText = "";
+            bool isErr = false;
+            int headerWidth = welcomeText.Length + 40;
             char heart = '\u2665';
             string usedLetters = "";
-            int life = 5;
+            List<char> usedLettersArr = new List<char>();
+            int life = 8;
+            string[] itBegriffe = {
+                "Bug Fixing",
+                "Rubber Ducking",
+                "Code Monkey",
+                "Null Pointer",
+                "Spaghetti Code",
+                "Feature Creep",
+                "Refactoring",
+                "Version Control",
+                "Legacy Code",
+                "WYSIWYG",
+                "Yak Shaving",
+                "Bikeshedding",
+                "Fizz Buzz",
+                "Hello World",
+                "Rubber Duck",
+                "Deep Learning",
+                "REST API",
+                "Scrum Master",
+                "Waterfall",
+                "Unit Testing",
+                "Continuous Integration",
+                "Cryptocurrency",
+                "Blockchain",
+                "Cybersecurity",
+                "Agile Sprint",
+                "Hackathon",
+                "API Gateway",
+                "Cloud Computing",
+                "Big Data",
+                "Machine Learning",
+                "DevOps Culture",
+                "Containerization",
+                "Microservices",
+                "Serverless",
+                "Git Branch",
+                "Pull Request",
+                "Merge Conflict",
+                "Regex Pattern",
+                "JSON Parsing",
+                "Lambda Function",
+                "Semantic Versioning",
+                "Garbage Collection",
+                "Infinite Loop",
+                "Binary Search",
+                "Recursive Function",
+                "Thread Deadlock",
+                "Memory Leak",
+                "Stack Overflow",
+                "Tech Debt",
+                "Continuous Deployment"
+            };
+            string text = itBegriffe[getRandomNumberBetween(0, itBegriffe.Length)];
 
             void init() {
 
@@ -36,8 +91,10 @@ namespace Hangman {
                  * [X] Make game case insensitive
                  * [X] Change text color 
                  * [ ] Allow only one character and no other chars
-                 * [ ] Add an array of possible texts and set them random
+                 * [X] Add an array of possible texts and set them random
                  * [ ] Ask at the end if the game should be repeated
+                 * [ ] Whole sentence as solution
+                 * [ ] Add feedback as info box 
                  * 
                 */
 
@@ -52,11 +109,14 @@ namespace Hangman {
                     // Show lifes
                     showLife();
 
-                    // Write the current state of the hidden text
-                    Console.WriteLine(hiddenText);
-
                     // Show uset letters
                     showUsedLetters();
+
+                    // Write the current state of the hidden text
+                    showHiddenText();
+
+                    // Show info text
+                    showInfoText();
 
                     // Check if text contains the given letter
                     isInputContainsLetter();
@@ -72,6 +132,29 @@ namespace Hangman {
                 }
             }
 
+            int getRandomNumberBetween(int min, int max){
+                Random rnd = new Random();
+                int nr = rnd.Next(min, max);
+                return nr;
+            }
+
+            void showInfoText() {
+
+                Console.WriteLine("(IT technical term)");
+
+                //if (isErr) 
+                //    Console.ForegroundColor = ConsoleColor.Red;
+
+                //Console.WriteLine(infoText);
+
+                //if (isErr)
+                //    Console.ResetColor();
+            }
+
+            void showHiddenText(){
+                Console.WriteLine($"\n\n{hiddenText}");
+            }
+
             string turnTextToHiddenFields(string text) {
                 for (int index = 0; index < text.Length; index++) {
                     hiddenText += text[index] != ' ' ? '_' : ' ';
@@ -80,35 +163,39 @@ namespace Hangman {
             }
 
             char getLetterFromUser() {
-                Console.Write("Write a letter: ");
-                // letter = char.IsLetter(Console.ReadKey().KeyChar) ? Console.ReadKey().KeyChar : '_';
+                Console.Write("\n\n\nWrite a letter: ");
                 letter = Console.ReadLine()[0];
                 return letter;
             }
 
             void showUsedLetters() {
-                Console.WriteLine("Used letters: " + usedLetters);
+                Console.WriteLine("\tLetters: " + usedLetters);
             }
 
             void showLife() {
                 string lifes = "";
 
+                // Add hearts to lifes
                 for (int i = 0; i < life; i++) {
                     lifes += heart;
                 }
 
                 Console.Write("Lifes: ");
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(lifes + "\n");
+                Console.Write(lifes);
                 Console.ResetColor();
             }
 
             void showSelectedLettersInString(char letter) {
                 bool isLetterMatches = false;
 
-                string comma = usedLetters.Length > 0 ? ", " : "";
+                string comma = usedLetters.Length > 0 ? "," : "";
+
+                usedLettersArr.Add(letter);
 
                 usedLetters += comma + letter.ToString();
+
+
 
                 for (int i = 0; i < text.Length; i++) {
 
@@ -141,6 +228,18 @@ namespace Hangman {
 
             bool isInputContainsLetter() {
                 char letter = getLetterFromUser();
+
+                Console.WriteLine(usedLettersArr.Count);
+
+                //infoText = "";
+                //isErr = false;
+
+                //if (usedLettersArr.Contains(letter)) {
+                //    infoText = "Letter already used";
+                //    isErr = true;
+                //    return false;
+                //}
+
                 return text.Contains(letter);
             }
 
