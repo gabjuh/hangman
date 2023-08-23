@@ -13,7 +13,8 @@ namespace Hangman {
             string text = "This is a hidden text";
             char letter = ' ';
             string hiddenText = string.Empty;
-            string welcomeText = "Welcome to my HANGMAN Game v1.0";
+            string welcomeText = "Welcome to my HANGMAN Game";
+            string gitLink = "https://github.com/gabjuh/hangman";
             int headerWidth = welcomeText.Length + 50;
             char heart = '\u2665';
             string usedLetters = "";
@@ -33,10 +34,11 @@ namespace Hangman {
                  * [X] Set headline design
                  * [X] Show already used characters
                  * [X] Make game case insensitive
-                 * [ ] Change text color 
+                 * [X] Change text color 
                  * [ ] Allow only one character and no other chars
                  * [ ] Add an array of possible texts and set them random
                  * [ ] Ask at the end if the game should be repeated
+                 * 
                 */
 
                 // Get input from user
@@ -144,9 +146,9 @@ namespace Hangman {
 
             string showHeadlineText(string text) {
                 string headerPatternLineWithTitle = "";
-                for (int i = 0; i < headerWidth - welcomeText.Length - 1; i++) {
-                    if (i == (headerWidth - welcomeText.Length) / 2) {
-                        headerPatternLineWithTitle += ' ' + welcomeText + ' ';
+                for (int i = 0; i < headerWidth - text.Length - 1; i++) {
+                    if (i == (headerWidth - text.Length) / 2) {
+                        headerPatternLineWithTitle += ' ' + text + ' ';
                     }
                     else {
                         headerPatternLineWithTitle += '*';
@@ -163,9 +165,13 @@ namespace Hangman {
                     headerPatternLine += '*';
                 }
 
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine(headerPatternLine);
                 Console.WriteLine(showHeadlineText(welcomeText));
                 Console.WriteLine(headerPatternLine);
+                Console.WriteLine(showHeadlineText(gitLink));
+                Console.WriteLine(headerPatternLine);
+                Console.ResetColor();
             }
 
             void isGameFinished() {
