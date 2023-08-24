@@ -1,5 +1,6 @@
 ﻿
 
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace Hangman {
@@ -9,170 +10,177 @@ namespace Hangman {
         static void Main(string[] args) {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+            #region Declarations
             bool gameFinished = false;
-            char letter = ' ';
+            bool gameSolved = false;
+            string letter = "";
             string hiddenText = string.Empty;
             string welcomeText = "Welcome to my HANGMAN Game";
+            string promptTextDefault = "Give me a letter or try a possible solution: ";
+            string promptTextNew = "Do you want another game? (y/n): ";
             string gitLink = "https://github.com/gabjuh/hangman";
-            string infoText = "";
+            string infoText = "Good Luck!";
             bool isErr = false;
-            int headerWidth = welcomeText.Length + 40;
+            bool isNewGameQuestion = false;
+            bool guessedCorrectly = false;
+            int headerWidth = welcomeText.Length + 20;
             char heart = '\u2665';
             string usedLetters = "";
             List<char> usedLettersArr = new List<char>();
-            int life = 8;
+            int maxLife = 8;
+            int life = maxLife;
             string[] itBegriffe = {
                 "Bug Fixing",
-                "Rubber Ducking",
-                "Code Monkey",
-                "Null Pointer",
-                "Spaghetti Code",
-                "Feature Creep",
-                "Refactoring",
-                "Version Control",
-                "Legacy Code",
-                "WYSIWYG",
-                "Yak Shaving",
-                "Bikeshedding",
-                "Fizz Buzz",
-                "Hello World",
-                "Rubber Duck",
-                "Deep Learning",
-                "REST API",
-                "Scrum Master",
-                "Waterfall",
-                "Unit Testing",
-                "Continuous Integration",
-                "Cryptocurrency",
-                "Blockchain",
-                "Cybersecurity",
-                "Agile Sprint",
-                "Hackathon",
-                "API Gateway",
-                "Cloud Computing",
-                "Big Data",
-                "Machine Learning",
-                "DevOps Culture",
-                "Containerization",
-                "Microservices",
-                "Serverless",
-                "Git Branch",
-                "Pull Request",
-                "Merge Conflict",
-                "Regex Pattern",
-                "JSON Parsing",
-                "Lambda Function",
-                "Semantic Versioning",
-                "Garbage Collection",
-                "Infinite Loop",
-                "Binary Search",
-                "Recursive Function",
-                "Thread Deadlock",
-                "Memory Leak",
-                "Stack Overflow",
-                "Tech Debt",
-                "Continuous Deployment"
             };
-            string text = itBegriffe[getRandomNumberBetween(0, itBegriffe.Length)];
+            string text = selectNewWord();
+            bool isExit = false;
+            #endregion
 
-            void init() {
-
-                /*
-                 * [x] Show program header
-                 * [X] Convert hidden text to blank fields (only letters)
-                 * [X] Convert hidden text to blank fields (only letters)
-                 * [X] Show blank fields
-                 * [X] Get a letter as user input
-                 * [X] Compare them
-                 * [x] Show life
-                 * [X] Refactor
-                 * [X] Set headline design
-                 * [X] Show already used characters
-                 * [X] Make game case insensitive
-                 * [X] Change text color 
-                 * [ ] Allow only one character and no other chars
-                 * [X] Add an array of possible texts and set them random
-                 * [ ] Ask at the end if the game should be repeated
-                 * [ ] Whole sentence as solution
-                 * [ ] Add feedback as info box 
-                 * 
-                */
-
-                // Get input from user
-                turnTextToHiddenFields(text);
-
-                while (!gameFinished) {
-
-                    // Show the header line
-                    showHeader();
-
-                    // Show lifes
-                    showLife();
-
-                    // Show uset letters
-                    showUsedLetters();
-
-                    // Write the current state of the hidden text
-                    showHiddenText();
-
-                    // Show info text
-                    showInfoText();
-
-                    // Check if text contains the given letter
-                    isInputContainsLetter();
-
-                    // Show hidden text with 
-                    showSelectedLettersInString(letter);
-
-                    // Clear the console
-                    Console.Clear();
-
-                    // Check if game finished
-                    isGameFinished();
+            #region Helpers
+            void print(string text, string color = "white", bool line = true)
+            {
+                if (color != "white") {
+                    if (color == "red") Console.ForegroundColor = ConsoleColor.Red;
+                    if (color == "green") Console.ForegroundColor = ConsoleColor.Green;
+                    if (color == "gray") Console.ForegroundColor = ConsoleColor.Gray;
                 }
+
+                if (line) {
+                    Console.WriteLine(text);
+                } else {
+                    Console.Write(text);
+                }
+
+                Console.ResetColor();
             }
 
-            int getRandomNumberBetween(int min, int max){
+            string selectNewWord()
+            {
+                return itBegriffe[getRandomNumberBetween(0, itBegriffe.Length)];
+            }
+
+            int getRandomNumberBetween(int min, int max)
+            {
                 Random rnd = new Random();
                 int nr = rnd.Next(min, max);
                 return nr;
             }
+            #endregion
+
+            #region Initialisation
+            void init() {
+                play();
+            }
+
+            void play()
+            {
+                turnTextToHiddenFields(text);
+
+                while (!isExit) {
+                    setGameField();
+                }
+            }
+
+            void setGameField ()
+            {
+                // Show the header line
+                showHeader();
+
+                showMenu();
+
+                // Show lifes
+                showLife();
+
+                // Show uset letters
+                showUsedLetters();
+
+                // Write the current state of the hidden text
+                showHiddenText();
+
+                // Show the type of the word or text that is hidden
+                showTypeOfWord();
+
+                // Show info text
+                showInfoText();
+
+                // Check if text contains the given letter
+                isTextContainsInputLetter();
+
+                // Show hidden text with 
+                showSelectedLettersInString(letter);
+
+                // Check if game finished
+                isGameFinished();
+
+                // Show Footer
+                //showFooter();
+            }
+            #endregion
+
+            #region Menu stuff
+            void showMenu()
+            {
+                print("\n\t1. Restart Game");
+                print("\t2. I give up, show the word!");
+                print("\t3. Exit\n");
+            }
+
+            void restartGame()
+            {
+                Console.Clear();
+                text = selectNewWord();
+                turnTextToHiddenFields(text);
+                hiddenText = string.Empty;
+                life = maxLife;
+                usedLetters = "";
+                usedLettersArr.Clear();
+                infoText = "New game! Better Luck!";
+                play();
+            }
+
+            void exitGame()
+            {
+                isExit = true;
+            }
+            #endregion
+
+            #region Show game parts
+            void showTypeOfWord()
+            {
+                print("\n\t(IT technical term)", "gray");
+            }
 
             void showInfoText() {
 
-                Console.WriteLine("(IT technical term)");
+                if (isErr) {
+                    print("\t" + infoText, "red");
+                }
+                else 
+                {
+                    print("\t" + infoText, "green");
+                }
 
-                //if (isErr) 
-                //    Console.ForegroundColor = ConsoleColor.Red;
-
-                //Console.WriteLine(infoText);
-
-                //if (isErr)
-                //    Console.ResetColor();
+                isErr = false;
+                infoText = "";
             }
 
             void showHiddenText(){
-                Console.WriteLine($"\n\n{hiddenText}");
-            }
-
-            string turnTextToHiddenFields(string text) {
-                for (int index = 0; index < text.Length; index++) {
-                    hiddenText += text[index] != ' ' ? '_' : ' ';
+                if (gameSolved) {
+                    print($"\n\t{hiddenText}", "green");
+                } else if (!gameSolved && life == 0) {
+                    print($"\n\t{text}", "red");
+                } else {
+                    print($"\n\t{hiddenText}");
                 }
-                return hiddenText;
             }
 
-            char getLetterFromUser() {
-                Console.Write("\n\n\nWrite a letter: ");
-                letter = Console.ReadLine()[0];
-                return letter;
+            void showUsedLetters()
+            {
+                print("\n\tUsed Letters: " + usedLetters, "gray");
             }
 
-            void showUsedLetters() {
-                Console.WriteLine("\tLetters: " + usedLetters);
-            }
-
-            void showLife() {
+            void showLife()
+            {
                 string lifes = "";
 
                 // Add hearts to lifes
@@ -180,22 +188,132 @@ namespace Hangman {
                     lifes += heart;
                 }
 
-                Console.Write("Lifes: ");
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(lifes);
-                Console.ResetColor();
+                print("\tLifes remain: ", "white", false);
+                print(lifes, "red", false);
             }
 
-            void showSelectedLettersInString(char letter) {
+            string showHeadlineText(string text)
+            {
+                string headerPatternLineWithTitle = "";
+                for (int i = 0; i < headerWidth - text.Length - 1; i++) {
+                    if (i == (headerWidth - text.Length) / 2) {
+                        headerPatternLineWithTitle += ' ' + text + ' ';
+                    }
+                    else {
+                        headerPatternLineWithTitle += '*';
+                    }
+                }
+                return headerPatternLineWithTitle;
+            }
+
+            void showHeader()
+            {
+                string headerPatternLine = "";
+
+                for (int i = 0; i < headerWidth; i++) {
+                    headerPatternLine += '*';
+                }
+
+                print(headerPatternLine);
+                print(showHeadlineText(welcomeText));
+                print(headerPatternLine);
+                print(showHeadlineText(gitLink));
+                print(headerPatternLine);
+            }
+
+            void showFooter()
+            {
+                string headerPatternLine = "";
+
+                for (int i = 0; i < headerWidth; i++) {
+                    headerPatternLine += '*';
+                }
+
+                print(headerPatternLine);
+                print(showHeadlineText(gitLink));
+                print(headerPatternLine);
+            }
+            #endregion
+
+            #region Game logic
+            string turnTextToHiddenFields(string text) {
+                for (int index = 0; index < text.Length; index++) {
+                    hiddenText += text[index] != ' ' ? '_' : ' ';
+                }
+                return hiddenText;
+            }
+
+            string getLetterFromUser() {
+                print($"\n\n\n{promptTextDefault}", "white", false);
+                letter = Console.ReadLine();
+                return letter;
+            }
+
+            string isAnotherGame()
+            {
+                print($"\n\n\n{promptTextNew}", "white", false);
+                letter = Console.ReadLine();
+                return letter;
+            }
+
+            void refresh()
+            {
+                Console.Clear();
+                setGameField();
+            }
+
+            void isWon()
+            {
+                if (!hiddenText.Contains('_') || guessedCorrectly) {
+                    gameFinished = true;
+                    gameSolved = true;
+                }
+            }
+
+            void isGameFinished()
+            {
+                if (!hiddenText.Contains('_')) {
+                    Console.Clear();
+                    gameSolved = true;
+                    isNewGameQuestion = true;
+                    infoText = "Congratulations!";
+                    refresh();
+                }
+                else {
+                    Console.Clear();
+                }
+            }
+
+            void gameOver()
+            {
+                infoText = "You lost!";
+                isErr = true;
+                isNewGameQuestion = true;
+                gameFinished = true;
+                refresh();
+            }
+
+            void giveUp()
+            {
+                infoText = "You p*ssy!";
+                isErr = true;
+                infoText += " Solution: " + text;
+                isNewGameQuestion = true;
+                refresh();
+            }
+            #endregion
+
+            #region Show game elements
+            void showSelectedLettersInString(string letter)
+            {
                 bool isLetterMatches = false;
 
                 string comma = usedLetters.Length > 0 ? "," : "";
 
-                usedLettersArr.Add(letter);
-
-                usedLetters += comma + letter.ToString();
-
-
+                if (!usedLettersArr.Contains(letter[0])) {
+                    usedLettersArr.Add(letter[0]);
+                    usedLetters += comma + letter.ToString();
+                }
 
                 for (int i = 0; i < text.Length; i++) {
 
@@ -207,9 +325,10 @@ namespace Hangman {
                     if (letterString == letterInput) {
                         char[] ch = hiddenText.ToCharArray();
                         if (isLetterStringUpper) {
-                            ch[i] = char.ToUpper(letter);
-                        } else {
-                            ch[i] = char.ToLower(letter);
+                            ch[i] = char.ToUpper(letter[0]);
+                        }
+                        else {
+                            ch[i] = char.ToLower(letter[0]);
                         }
                         hiddenText = new string(ch);
                         isLetterMatches = true;
@@ -223,67 +342,70 @@ namespace Hangman {
                         gameOver();
                 }
 
-                Console.WriteLine(hiddenText);
+                print(hiddenText);
             }
+            #endregion
+                                    
+            #region Input check
+            bool isTextContainsInputLetter() {
+                string letter = isNewGameQuestion ? isAnotherGame() : getLetterFromUser();
 
-            bool isInputContainsLetter() {
-                char letter = getLetterFromUser();
+                bool isMatching = false;
 
-                Console.WriteLine(usedLettersArr.Count);
-
-                //infoText = "";
-                //isErr = false;
-
-                //if (usedLettersArr.Contains(letter)) {
-                //    infoText = "Letter already used";
-                //    isErr = true;
-                //    return false;
-                //}
-
-                return text.Contains(letter);
-            }
-
-            string showHeadlineText(string text) {
-                string headerPatternLineWithTitle = "";
-                for (int i = 0; i < headerWidth - text.Length - 1; i++) {
-                    if (i == (headerWidth - text.Length) / 2) {
-                        headerPatternLineWithTitle += ' ' + text + ' ';
+                if (isNewGameQuestion) {
+                    if (letter[0] == 'y') {
+                        isNewGameQuestion = false;
+                        restartGame();
+                    }
+                    else if (letter[0] == 'n') {
+                        exitGame();
                     }
                     else {
-                        headerPatternLineWithTitle += '*';
+                        isErr = true;
+                        infoText = "Stop doing that!";
                     }
                 }
-                return headerPatternLineWithTitle;
-            }
+                else
+                {
+                    isMatching = text.ToLower().Contains(letter);
 
-            void showHeader() {
+                    int matches = text.ToLower().Count(m => (m == letter[0]));
 
-                string headerPatternLine = "";
+                    print(usedLettersArr.Count.ToString());
 
-                for (int i = 0; i < headerWidth; i++) {
-                    headerPatternLine += '*';
+                    if (letter[0] == '1') restartGame();
+
+                    if (letter[0] == '2') giveUp();
+
+                    if (letter[0] == '3') exitGame();
+
+                    if (letter == text) {
+                        guessedCorrectly = true;
+                        //isGameFinished();
+                        isWon();
+                        refresh();
+                    }
+
+                    if (usedLettersArr.Contains(letter[0])) {
+                        infoText = "Letter already used";
+                        isErr = true;
+                        refresh();
+                        isWon();
+                        return false;
+                    }
+
+                    if (isMatching) {
+                        infoText = $"Great! Matches for letter '{letter[0]}': {matches}.";
+                    }
+                    else {
+                        infoText = $"Sorry, no matches for letter '{letter[0]}'.";
+                        isErr = true;
+                    }
                 }
 
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine(headerPatternLine);
-                Console.WriteLine(showHeadlineText(welcomeText));
-                Console.WriteLine(headerPatternLine);
-                Console.WriteLine(showHeadlineText(gitLink));
-                Console.WriteLine(headerPatternLine);
-                Console.ResetColor();
+                return isMatching;
             }
-
-            void isGameFinished() {
-                if (!hiddenText.Contains('_')) {
-                    gameFinished = true;
-                    Console.WriteLine("Congratulations!");
-                }
-            }
-
-            void gameOver() {
-                Console.WriteLine("You lost!");
-                gameFinished = true;
-            }
+            #endregion
 
             init();
         }
