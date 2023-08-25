@@ -17,7 +17,7 @@
 [-] Allow only one character and no other chars
 [X] Add an array of possible texts and set them random
 [X] Ask at the end if the game should be repeated
-[ ] Whole sentence as solution
+[X] Whole sentence as solution
 [X] Add feedback as info box
 [X] Add a menu
    1. [X] Restart

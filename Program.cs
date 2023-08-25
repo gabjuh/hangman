@@ -30,10 +30,51 @@ namespace Hangman {
             int maxLife = 8;
             int life = maxLife;
             string[] itBegriffe = {
-                "Bug Fixing",
+                "Werzweigung",
+                "Schleife",
+                "Logische Operatoren",
+                "Bedienung",
+                "Wahrheitstabelle",
+                "Variablen Deklaration",
+                "Console",
+                "Debugging",
             };
             string text = selectNewWord();
             bool isExit = false;
+
+            #region For David
+            string forDavid = "@&&&&%#/(##(/*****,**,*///**/(((#%%#((////*/%&&%%%&%###%%#(%&&@@@@@@&&&&&%&&&&&&\n" +
+                "((((######((##%%%%%#*.,((((##(//#&&&&&@@@&%#(#&@@@&%##(%&@@@@@@@@@@@&&&&%%%%%&%%\n" +
+                "..(%%(,,...*//#%%%%%%%###%%&&#*/###&@@@&%&&&&@@@&%%&&@@@@@@@@@@@@@@&&&%#(##%%%%#\n" +
+                "..,,,......,/(#%%%%%#/..,,***/(#((###%%%&&&@@&&&@@&&&@@@@@@@@@@@@@@&((/(######%%\n" +
+                "....,***,,........,,,,,,,,*/////****//*,/#&&@@@@@@@&&&@@@@@@@@@@@@@&****/#%%####\n" +
+                "  ..........  .......,,,,,,*/*,,,    &&@@&&&&&&&&&&&&&&&&@@@@@@@&&&&%(#%(((#(///\n" +
+                "    ...        ......,,...,//*,,.%&&&&&@&&&&&&&&&%&&&&&@@@&@@@&&&&&%(**/#(/**,,,\n" +
+                "  ...................,,...,/%@&&@&&&&&&&&%&%%%%%%%%%&&&&&@@&@@&&&&%(****,,,.   .\n" +
+                ".....................,,,.&&&&&&&&&&&&&%%###%##%%%%%#%&&&&&&&&&&%&%/,,,*,.       \n" +
+                "...................,**,*%%%%&&%&&#%&&&&#%&(##(%%######%%%%%&%%%%%/......       .\n" +
+                "................,***,,,#%&&&&&%%(#%**/##%&&&&((/*/(###%%&%%&%%%%#..............,\n" +
+                ".....,,,,,,,,,,,**,,***/#%%%%&&&%#/(/,,,,,,*/((/*,/#%#%%&&&&%&%#,...,.......,***\n" +
+                ",,,,,,,,***********///*/#%%%%&%(%%#/*,,,,,,,,,,,,,/#%%%&&&&%%%%**********,,,*///\n" +
+                "*********//***/////////#%%%&&%%&%/(*,,,,,,,,,,,,,,%%%%%%%&&&%%%(((//////////////\n" +
+                "**//////////////(//(///#%%%&&&&&%#,,,,,,,,,,,,,,,/%%%%%#%%%%%%#((((((((((((((///\n" +
+                "////////////((((((((((%#%%%&&&&%%#,,,,****,,,,,,*%%%%###%##%%%(((((((((((((((((/\n" +
+                "/////////(((((((((((%%%(%%&&&&%%#(,,,*******,,*(####%%%%%#%%%%(((((((((((((((/,,\n" +
+                "/////((((((((((((((#&%#(#%%%&&&&&*...,,,,,/(((((##(####%######((((((((((((((/,,,\n" +
+                "///((((((((((((((((%&%(*(#%%&&&&&&&&*,((((((((((##(#(((((((((((((((((((((((/,,,,\n" +
+                "((((((((((((((((((%%&%(***(#%%%%&&&%%#((((((((((######(((###((((((((((((((/,..,,\n" +
+                "(((((((((((((((((#%%%#/,,.,,*(##%%&&&&&&&&&&%%((##((#%%##(/(#(((((((((((((*..,,,\n" +
+                "(((((((((((((((((#%%%#/,,,,,,.,*((##%%%%%&&&&&&(###%%%%%%%#((((((((((((((/*..,,,\n" +
+                "(((((((((((((((((%%%%#/,,,,,...,(,,**//((###%%%###%%%%%%%##((((((/(////((/,..,,,\n" +
+                "((((((((((((((((#%%%%#/*,,,...,*((((((((((*,,,,*,(##%%%%%#((((///////////*..,,,,\n" +
+                "(((((((((((((((#%%##(/**,,.,,,*((((((((((((((((((((*/(##/(((((///////////,,,,,*,\n" +
+                "((((///((((/(((#%%%%#(/,,,.,,((((((((((((((((((((((((((((((((////(//////*..,,***\n" +
+                "(((((((((((///(#%%####(**/((((((((((((((((((((((/(((((((((((////////////,.,,,,,*\n" +
+                "((((((((((((((#%#%####/**(((((((((((((((((((((((//(((((((((////////////*.,,,,,,,\n" +
+                "((((((((((((((#%#####(,((((((((((((((((/((///(((((((((((//(////////////,,,,,,,,,\n" +
+                "((((((((((((((*(((((*(((((((((((((((//(///(///(((////(/(//////////////*..,,,,,,,\n" +
+                "(((((((((((((((((/((((((((((((((((((((/////(((////////////////////////,.,,,,,,,,\n";
+            #endregion f
             #endregion
 
             #region Helpers
@@ -79,6 +120,11 @@ namespace Hangman {
                 while (!isExit) {
                     setGameField();
                 }
+
+                print(forDavid, "green");
+
+                print("Press any key to exit...", "green");
+                string bla = Console.ReadLine();
             }
 
             void setGameField ()
@@ -131,6 +177,7 @@ namespace Hangman {
                 text = selectNewWord();
                 turnTextToHiddenFields(text);
                 hiddenText = string.Empty;
+                guessedCorrectly = false;
                 life = maxLife;
                 usedLetters = "";
                 usedLettersArr.Clear();
@@ -147,7 +194,7 @@ namespace Hangman {
             #region Show game parts
             void showTypeOfWord()
             {
-                print("\n\t(IT technical term)", "gray");
+                print("\n\t(Programmierungsbegriffe)", "gray");
             }
 
             void showInfoText() {
@@ -166,7 +213,7 @@ namespace Hangman {
 
             void showHiddenText(){
                 if (gameSolved) {
-                    print($"\n\t{hiddenText}", "green");
+                    print($"\n\t{text}", "green");
                 } else if (!gameSolved && life == 0) {
                     print($"\n\t{text}", "red");
                 } else {
@@ -195,12 +242,12 @@ namespace Hangman {
             string showHeadlineText(string text)
             {
                 string headerPatternLineWithTitle = "";
-                for (int i = 0; i < headerWidth - text.Length - 1; i++) {
+                for (int i = 0; i < headerWidth - text.Length; i++) {
                     if (i == (headerWidth - text.Length) / 2) {
                         headerPatternLineWithTitle += ' ' + text + ' ';
                     }
                     else {
-                        headerPatternLineWithTitle += '*';
+                        headerPatternLineWithTitle += '-';
                     }
                 }
                 return headerPatternLineWithTitle;
@@ -210,8 +257,8 @@ namespace Hangman {
             {
                 string headerPatternLine = "";
 
-                for (int i = 0; i < headerWidth; i++) {
-                    headerPatternLine += '*';
+                for (int i = 0; i <= headerWidth; i++) {
+                    headerPatternLine += '-';
                 }
 
                 print(headerPatternLine);
@@ -259,7 +306,7 @@ namespace Hangman {
             void refresh()
             {
                 Console.Clear();
-                setGameField();
+                //setGameField();
             }
 
             void isWon()
@@ -272,16 +319,12 @@ namespace Hangman {
 
             void isGameFinished()
             {
-                if (!hiddenText.Contains('_')) {
-                    Console.Clear();
+                if (!hiddenText.Contains('_') || guessedCorrectly) {
                     gameSolved = true;
                     isNewGameQuestion = true;
                     infoText = "Congratulations!";
-                    refresh();
                 }
-                else {
-                    Console.Clear();
-                }
+                refresh();
             }
 
             void gameOver()
@@ -352,7 +395,7 @@ namespace Hangman {
 
                 bool isMatching = false;
 
-                if (isNewGameQuestion) {
+                if (isNewGameQuestion && letter.Length > 0) {
                     if (letter[0] == 'y') {
                         isNewGameQuestion = false;
                         restartGame();
@@ -381,10 +424,30 @@ namespace Hangman {
 
                     if (letter == text) {
                         guessedCorrectly = true;
-                        //isGameFinished();
-                        isWon();
-                        refresh();
+                        isGameFinished();
+
                     }
+
+                    //switch(letter[0]) {
+                    //    case '1':
+                    //        restartGame ();
+                    //        break;
+                    //    case '2': 
+                    //        giveUp();
+                    //        break;
+                    //    case '3':
+                    //        exitGame();
+                    //        break;
+                    //    default: 
+                    //        if (letter == text) {
+                    //            guessedCorrectly = true;
+                    //            isGameFinished();
+                    //        } else if (letter.Length > 1 && letter != text) {
+                    //            isErr = true;
+                    //            infoText = "Nice try, but no. It consts two hearts. 💩";
+                    //        }
+                    //        break;
+                    //}
 
                     if (usedLettersArr.Contains(letter[0])) {
                         infoText = "Letter already used";
@@ -397,7 +460,7 @@ namespace Hangman {
                     if (isMatching) {
                         infoText = $"Great! Matches for letter '{letter[0]}': {matches}.";
                     }
-                    else {
+                    else if (!isExit) {
                         infoText = $"Sorry, no matches for letter '{letter[0]}'.";
                         isErr = true;
                     }
